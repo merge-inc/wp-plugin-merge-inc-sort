@@ -1,0 +1,37 @@
+{
+    "require": {
+        "php": "^7.4 || ^8.3 || ^8.4",
+        "league/plates": "3.5.*",
+        "php-di/php-di": "6.4.*"
+    },
+    "extra": {
+        "mozart": {
+            "dep_namespace": "MergeInc\\Sort\\Dependencies\\",
+            "dep_directory": "/src/Dependencies/",
+            "classmap_directory": "/classes",
+            "classmap_prefix": "MS_",
+            "delete_vendor_directories": true
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "mozart compose",
+            "composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "mozart compose",
+            "composer dump-autoload"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "MergeInc\\Sort\\": "src"
+        },
+        "classmap": [
+            "classes/"
+        ]
+    },
+    "require-dev": {
+        "coenjacobs/mozart": "*"
+    }
+}
