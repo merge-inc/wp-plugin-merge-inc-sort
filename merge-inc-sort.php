@@ -5,7 +5,7 @@ declare(strict_types=1);
  * Plugin Name: Sort
  * Plugin URI: https://wordpress.org/plugins/sort/
  * Description: Sort Plugin
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Merge Inc
  * Author URI: https://joinmerge.gr
  * GitHub Plugin URI: https://github.com/merge-inc/sort
