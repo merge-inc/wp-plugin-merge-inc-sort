@@ -6,4 +6,4 @@
  * @var string $checked
  */
 ?>
-<input type='checkbox' id='<?php echo $id; ?>' name='<?php echo $id; ?>' value='yes' <?php echo $checked; ?>/>
+<input type="checkbox" id="<?=$id?>" name="<?=$id?>" value="yes" <?=$checked?>/>

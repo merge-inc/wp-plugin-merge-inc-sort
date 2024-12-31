@@ -7,8 +7,8 @@
  */
 ?>
 <div class="wrap">
-	<h1><?php echo $title; ?></h1>
-	<form action="options.php" method="post">
-		<?php echo $pageContent; ?>
-	</form>
+    <h1><?=$title?></h1>
+    <form action="options.php" method="post">
+		<?=$pageContent?>
+    </form>
 </div>

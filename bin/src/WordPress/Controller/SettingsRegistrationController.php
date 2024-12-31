@@ -52,6 +52,7 @@ final class SettingsRegistrationController extends AbstractController {
 	 */
 	public function __invoke(): void {
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELDS_ACTIVATED );
+		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELDS_FREEMIUM_ACTIVATED );
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELDS_DEFAULT );
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELD_TRENDING_LABEL );
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELD_TRENDING_INTERVAL );
@@ -59,7 +60,9 @@ final class SettingsRegistrationController extends AbstractController {
 		add_settings_section(
 			Constants::SETTINGS_SECTION_ACTIVATION,
 			'🔌 | ' . __( 'Activation Settings', 'ms' ),
-			function () {},
+			function () {
+				echo '<hr>';
+			},
 			Constants::ADMIN_MENU_PAGE_SLUG,
 		);
 
@@ -79,10 +82,28 @@ final class SettingsRegistrationController extends AbstractController {
 			Constants::SETTINGS_SECTION_ACTIVATION,
 		);
 
+		add_settings_field(
+			Constants::SETTINGS_FIELDS_FREEMIUM_ACTIVATED,
+			__( 'Freemium Activated', 'ms' ),
+			function () {
+				echo $this->engine->render(
+					'settings-field-checkbox',
+					array(
+						'id'      => Constants::SETTINGS_FIELDS_FREEMIUM_ACTIVATED,
+						'checked' => checked( true, $this->metaDataHelper->isFreemiumActivated(), false ),
+					)
+				);
+			},
+			Constants::ADMIN_MENU_PAGE_SLUG,
+			Constants::SETTINGS_SECTION_ACTIVATION,
+		);
+
 		add_settings_section(
 			Constants::SETTINGS_SECTION_BASIC,
 			'⚙️ | ' . __( 'Basic Settings', 'ms' ),
-			function () {},
+			function () {
+				echo '<hr>';
+			},
 			Constants::ADMIN_MENU_PAGE_SLUG,
 		);
 
@@ -118,22 +139,32 @@ final class SettingsRegistrationController extends AbstractController {
 			Constants::SETTINGS_SECTION_BASIC,
 		);
 
+		add_settings_section(
+			Constants::SETTINGS_SECTION_FREEMIUM,
+			'🌟 | ' . __( 'Freemium Settings', 'ms' ),
+			function () {
+				echo '<hr>';
+			},
+			Constants::ADMIN_MENU_PAGE_SLUG,
+		);
+
 		add_settings_field(
 			Constants::SETTINGS_FIELD_TRENDING_INTERVAL,
-			__( 'Trending Key', 'ms' ),
+			__( 'Trending Interval', 'ms' ),
 			function () {
 				echo $this->engine->render(
 					'settings-field-trending-interval',
 					array(
-						'id'        => Constants::SETTINGS_FIELD_TRENDING_INTERVAL,
-						'intervals' => $this->mapper->getIntervals(),
-						'daysLabel' => __( 'Days', 'ms' ),
-						'value'     => $this->metaDataHelper->getTrendingInterval(),
+						'freemiumActivated' => $this->metaDataHelper->isFreemiumActivated(),
+						'id'                => Constants::SETTINGS_FIELD_TRENDING_INTERVAL,
+						'intervals'         => $this->mapper->getIntervals(),
+						'daysLabel'         => __( 'Days', 'ms' ),
+						'value'             => $this->metaDataHelper->isFreemiumActivated() ? $this->metaDataHelper->getTrendingInterval() : 7,
 					)
 				);
 			},
 			Constants::ADMIN_MENU_PAGE_SLUG,
-			Constants::SETTINGS_SECTION_BASIC,
+			Constants::SETTINGS_SECTION_FREEMIUM,
 		);
 	}
 }

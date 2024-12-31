@@ -7,7 +7,11 @@ use Exception;
 use MergeInc\Sort\WordPress\ProductsHelper;
 
 /**
+ * Class RunProductsMetaKeysCreationActionController
  *
+ * @package MergeInc\Sort\WordPress\Controller
+ * @author Christos Athanasiadis <chris.k.athanasiadis@gmail.com>
+ * @date 30/12/24
  */
 final class RunProductsMetaKeysCreationActionController extends AbstractController {
 

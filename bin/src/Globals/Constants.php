@@ -61,11 +61,6 @@ final class Constants {
 	/**
 	 *
 	 */
-	public const TOTAL_SALES_COLUMN_NAME = 'ms_total_sales';
-
-	/**
-	 *
-	 */
 	public const DAILY_SALES_COLUMN_NAME = 'ms_daily_sales';
 
 	/**
@@ -106,6 +101,11 @@ final class Constants {
 	/**
 	 *
 	 */
+	public const INFORM_WEBSITE_DATA_ACTION_NAME = 'ms_inform_website_data';
+
+	/**
+	 *
+	 */
 	public const ADMIN_DATA_FILTER = 'ms_admin_data';
 
 	/**
@@ -131,7 +131,17 @@ final class Constants {
 	/**
 	 *
 	 */
+	public const SETTINGS_SECTION_FREEMIUM = 'ms-settings-section-freemium';
+
+	/**
+	 *
+	 */
 	public const SETTINGS_FIELDS_ACTIVATED = 'ms-settings-field-activated';
+
+	/**
+	 *
+	 */
+	public const SETTINGS_FIELDS_FREEMIUM_ACTIVATED = 'ms-settings-field-freemium-activated';
 
 	/**
 	 *

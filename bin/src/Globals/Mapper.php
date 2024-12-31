@@ -37,58 +37,59 @@ final class Mapper {
 	/**
 	 *
 	 */
-	public const IS_APPLICABLE_INTERVAL = 'isApplicableInterval';
+	public const HAS_META_KEY = 'hasMetaKey';
 
 	/**
 	 *
 	 */
 	private const MAPS = array(
 		array(
-			self::INTERVAL               => 1,
-			self::LABEL                  => 'Today',
-			self::IS_APPLICABLE_INTERVAL => false,
+			self::INTERVAL     => 1,
+			self::COLUMN       => Constants::DAILY_SALES_COLUMN_NAME,
+			self::LABEL        => 'Today',
+			self::HAS_META_KEY => false,
 		),
 		array(
-			self::INTERVAL               => 7,
-			self::COLUMN                 => Constants::WEEKLY_SALES_COLUMN_NAME,
-			self::META_KEY               => Constants::PRODUCT_WEEKLY_SALES_META_KEY,
-			self::LABEL                  => 'Weekly',
-			self::IS_APPLICABLE_INTERVAL => true,
+			self::INTERVAL     => 7,
+			self::COLUMN       => Constants::WEEKLY_SALES_COLUMN_NAME,
+			self::META_KEY     => Constants::PRODUCT_WEEKLY_SALES_META_KEY,
+			self::LABEL        => 'Weekly',
+			self::HAS_META_KEY => true,
 		),
 		array(
-			self::INTERVAL               => 15,
-			self::COLUMN                 => Constants::BIWEEKLY_SALES_COLUMN_NAME,
-			self::META_KEY               => Constants::PRODUCT_BIWEEKLY_SALES_META_KEY,
-			self::LABEL                  => 'Biweekly',
-			self::IS_APPLICABLE_INTERVAL => true,
+			self::INTERVAL     => 15,
+			self::COLUMN       => Constants::BIWEEKLY_SALES_COLUMN_NAME,
+			self::META_KEY     => Constants::PRODUCT_BIWEEKLY_SALES_META_KEY,
+			self::LABEL        => 'Biweekly',
+			self::HAS_META_KEY => true,
 		),
 		array(
-			self::INTERVAL               => 30,
-			self::COLUMN                 => Constants::MONTHLY_SALES_COLUMN_NAME,
-			self::META_KEY               => Constants::PRODUCT_MONTHLY_SALES_META_KEY,
-			self::LABEL                  => 'Monthly',
-			self::IS_APPLICABLE_INTERVAL => true,
+			self::INTERVAL     => 30,
+			self::COLUMN       => Constants::MONTHLY_SALES_COLUMN_NAME,
+			self::META_KEY     => Constants::PRODUCT_MONTHLY_SALES_META_KEY,
+			self::LABEL        => 'Monthly',
+			self::HAS_META_KEY => true,
 		),
 		array(
-			self::INTERVAL               => 90,
-			self::COLUMN                 => Constants::QUARTERLY_SALES_COLUMN_NAME,
-			self::META_KEY               => Constants::PRODUCT_QUARTERLY_SALES_META_KEY,
-			self::LABEL                  => 'Quarterly',
-			self::IS_APPLICABLE_INTERVAL => true,
+			self::INTERVAL     => 90,
+			self::COLUMN       => Constants::QUARTERLY_SALES_COLUMN_NAME,
+			self::META_KEY     => Constants::PRODUCT_QUARTERLY_SALES_META_KEY,
+			self::LABEL        => 'Quarterly',
+			self::HAS_META_KEY => true,
 		),
 		array(
-			self::INTERVAL               => 180,
-			self::COLUMN                 => Constants::HALF_YEARLY_SALES_COLUMN_NAME,
-			self::META_KEY               => Constants::PRODUCT_HALF_YEARLY_SALES_META_KEY,
-			self::LABEL                  => 'Half Yearly',
-			self::IS_APPLICABLE_INTERVAL => true,
+			self::INTERVAL     => 180,
+			self::COLUMN       => Constants::HALF_YEARLY_SALES_COLUMN_NAME,
+			self::META_KEY     => Constants::PRODUCT_HALF_YEARLY_SALES_META_KEY,
+			self::LABEL        => 'Half Yearly',
+			self::HAS_META_KEY => true,
 		),
 		array(
-			self::INTERVAL               => 365,
-			self::COLUMN                 => Constants::YEARLY_SALES_COLUMN_NAME,
-			self::META_KEY               => Constants::PRODUCT_YEARLY_SALES_META_KEY,
-			self::LABEL                  => 'Yearly',
-			self::IS_APPLICABLE_INTERVAL => true,
+			self::INTERVAL     => 365,
+			self::COLUMN       => Constants::YEARLY_SALES_COLUMN_NAME,
+			self::META_KEY     => Constants::PRODUCT_YEARLY_SALES_META_KEY,
+			self::LABEL        => 'Yearly',
+			self::HAS_META_KEY => true,
 		),
 	);
 
@@ -98,7 +99,7 @@ final class Mapper {
 	 */
 	public function getColumns(): array {
 		$columns   = array();
-		$intervals = $this->getIntervals();
+		$intervals = $this->getIntervals( false );
 		foreach ( $intervals as $interval ) {
 			$columns[] = $this->getBy( self::INTERVAL, $interval, self::COLUMN );
 		}
@@ -107,12 +108,18 @@ final class Mapper {
 	}
 
 	/**
+	 * @param bool $onlyWithMetaKey
 	 * @return array
 	 */
-	public function getIntervals(): array {
+	public function getIntervals( bool $onlyWithMetaKey = true ): array {
 		$intervals = array();
 		foreach ( self::MAPS as $map ) {
-			if ( $map[ self::IS_APPLICABLE_INTERVAL ] ) {
+			if ( ! $onlyWithMetaKey ) {
+				$intervals[] = $map[ self::INTERVAL ];
+				continue;
+			}
+
+			if ( $map[ self::HAS_META_KEY ] ) {
 				$intervals[] = $map[ self::INTERVAL ];
 			}
 		}
@@ -128,7 +135,7 @@ final class Mapper {
 	 * @throws Exception
 	 */
 	public function getBy( $search, $value, $return ) {
-		$intervals = $this->getIntervals();
+		$intervals = $this->getIntervals( $search === self::META_KEY );
 		foreach ( self::MAPS as $map ) {
 			if ( ( $map[ $search ] ?? null ) === $value ) {
 				if ( in_array( $map[ self::INTERVAL ], $intervals ) ) {

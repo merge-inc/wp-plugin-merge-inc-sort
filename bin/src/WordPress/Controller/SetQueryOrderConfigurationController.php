@@ -12,7 +12,7 @@ use MergeInc\Sort\Globals\Mapper;
  *
  * @package MergeInc\Sort\WordPress\Controller
  * @author Christos Athanasiadis <chris.k.athanasiadis@gmail.com>
- * @date 20/12/24
+ * @date 30/12/24
  */
 final class SetQueryOrderConfigurationController extends AbstractController {
 

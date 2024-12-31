@@ -96,6 +96,29 @@ class Sort {
 			wp_schedule_event( time(), 'hourly', Constants::CREATE_PRODUCTS_META_KEYS_ACTION_NAME );
 		}
 
+		if ( ! wp_next_scheduled( Constants::INFORM_WEBSITE_DATA_ACTION_NAME ) ) {
+			wp_schedule_event( time(), 'daily', Constants::INFORM_WEBSITE_DATA_ACTION_NAME );
+		}
+
+		add_action(
+			Constants::INFORM_WEBSITE_DATA_ACTION_NAME,
+			function () {
+				/**
+				 * @var MetaDataHelper $metaDataHelper
+				 */
+				$metaDataHelper = $this->getFromContainer( MetaDataHelper::class );
+
+				if ( $metaDataHelper->isFreemiumActivated() ) {
+					echo get_site_url();
+					echo PHP_EOL;
+					echo get_option( 'admin_email' );
+				} else {
+					echo 'FREEMIUM NOT ACTIVE';
+				}
+				echo PHP_EOL;
+			}
+		);
+
 		/**
 		 * @var ControllerRegistrar $controllerRegistrar
 		 */
@@ -106,7 +129,7 @@ class Sort {
 		 */
 		$controllerRegistrar->register(
 			Constants::CREATE_PRODUCTS_META_KEYS_ACTION_NAME,
-			RunProductsMetaKeysCreationActionController::class
+			RunProductsMetaKeysCreationActionController::class,
 		);
 
 		/**
@@ -154,7 +177,7 @@ class Sort {
 		 */
 		$controllerRegistrar->register(
 			'woocommerce_catalog_orderby',
-			AddTrendingOptionInCategorySortingOptionsController::class
+			AddTrendingOptionInCategorySortingOptionsController::class,
 		);
 
 		/**
@@ -184,28 +207,45 @@ class Sort {
 				// TODO USE TEMPLATE
 				// TODO MAKE AJAX
 				?>
-			<div class="notice notice-warning is-dismissible">
-				<p><strong>Sort</strong> | It seems that <code>Sort</code> has never created product keys. <a
-							href="/sort/api/v1/keys" target="_blank">here</a> to create them. <strong
-							style="color:red">Warning:</strong> It might
-					take some moments to be completed</p>
-			</div>
+				<div class="notice notice-warning is-dismissible">
+					<p><strong>Sort</strong> | It seems that <code>Sort</code> has never created product keys. <a
+								href="/sort/api/v1/keys" target="_blank">here</a> to create them. <strong
+								style="color:red">Warning:</strong> It might
+						take some moments to be completed</p>
+				</div>
 				<?php
 			},
-			-1
+			-1,
 		);
 
 		add_action(
 			'admin_notices',
 			function () {
+				if ( ( $_GET['page'] ?? null ) === Constants::ADMIN_MENU_PAGE_SLUG ) {
+					return;
+				}
+
 				/**
 				 * @var Engine $engine
 				 */
 				$engine = $this->getFromContainer( Engine::class );
 
 				echo $engine->render( 'generic-message-notice' );
+
+				$adminEmail = get_option( 'admin_email' );
+				echo $engine->render(
+					'subscribe-notice',
+					array(
+						'message'    => __(
+							'Unlock exclusive updates, special offers, and insider tips—subscribe now and never miss out!',
+							'ms'
+						),
+						'adminEmail' => $adminEmail,
+						'siteUrl'    => get_site_url(),
+					)
+				);
 			},
-			-99
+			-99,
 		);
 
 		add_filter(
@@ -230,7 +270,7 @@ class Sort {
 					array(
 						'trending',
 						null,
-					)
+					),
 				) ) {
 					$args['orderby']  = 'meta_value_num';
 					$args['meta_key'] = $metaDataHelper->getTrendingMetaKey();
@@ -239,7 +279,7 @@ class Sort {
 
 				return $args;
 			},
-			11
+			11,
 		);
 
 		add_filter(
@@ -259,7 +299,7 @@ class Sort {
 
 				return $metaDataHelper->isDefault() ? 'trending' : false;
 			},
-			99
+			99,
 		);
 
 		add_action(
@@ -268,7 +308,7 @@ class Sort {
 				if ( class_exists( FeaturesUtil::class ) ) {
 					FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__ );
 				}
-			}
+			},
 		);
 	}
 
@@ -289,7 +329,7 @@ class Sort {
 					Engine::class => function (): Engine {
 						return new Engine( __DIR__ . '/templates' );
 					},
-				)
+				),
 			);
 			$this->container = $containerBuilder->build();
 		}
@@ -307,6 +347,6 @@ try {
 			$engine = new Engine( __DIR__ . '/templates' );
 			echo $engine->render( 'error-notice', array( 'e' => $e ) );
 		},
-		-1
+		-1,
 	);
 }

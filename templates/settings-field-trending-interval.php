@@ -8,23 +8,23 @@
 /**
  * @var array $intervals
  */
-
 /**
  * @var string $daysLabel
  */
-
+/**
+ * @var bool $freemiumActivated
+ */
 ?>
-<select id='<?php echo $id; ?>' name='<?php echo $id; ?>' style='width: 100%'>
+<select id="<?=$id;?>" name="<?=$id?>" style="width: 100%">
 	<?php
-	foreach ( $intervals as $interval ) :
-		?>
+	foreach($intervals as $interval) :?>
 		<?php
-		if ( $interval > 30 ) {
+		if($interval > 30) {
 			continue;
 		}
 		?>
-		<option value="<?php echo $interval; ?>" <?php echo $value === $interval ? 'selected' : ''; ?>><?php echo $interval; ?> <?php echo $daysLabel; ?></option>
-		<?php
-	endforeach
-	?>
+        <option <?=$freemiumActivated ? "" : ($interval > 7 ? "disabled" : "")?> value="<?=$interval;?>" <?=$value ===
+		$interval ? "selected" : "";?>><?=$interval?> <?=$daysLabel?></option>
+	<?php
+	endforeach ?>
 </select>

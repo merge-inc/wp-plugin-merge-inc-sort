@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace MergeInc\Sort\WordPress\Controller;
 
 /**
- * Class ControllerRegistrar
+ * Class AbstractController
  *
  * @package MergeInc\Sort\WordPress\Controller
  * @author Christos Athanasiadis <chris.k.athanasiadis@gmail.com>

@@ -161,6 +161,13 @@ final class MetaDataHelper {
 	 * @return int
 	 */
 	public function getTrendingInterval(): int {
-		return (int) ( get_option( Constants::SETTINGS_FIELD_TRENDING_INTERVAL ) ?: 30 );
+		return $this->isFreemiumActivated() ? (int) ( get_option( Constants::SETTINGS_FIELD_TRENDING_INTERVAL ) ?: 30 ) : 7;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isFreemiumActivated(): bool {
+		return get_option( Constants::SETTINGS_FIELDS_FREEMIUM_ACTIVATED, 'no' ) === 'yes';
 	}
 }
