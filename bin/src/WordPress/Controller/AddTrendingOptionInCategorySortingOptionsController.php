@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace MergeInc\Sort\WordPress\Controller;
 
-use MergeInc\Sort\WordPress\MetaDataHelper;
+use MergeInc\Sort\WordPress\DataHelper;
 
 /**
  * Class AddTrendingOptionInCategorySortingOptionsController
@@ -15,15 +15,15 @@ use MergeInc\Sort\WordPress\MetaDataHelper;
 final class AddTrendingOptionInCategorySortingOptionsController extends AbstractController {
 
 	/**
-	 * @var MetaDataHelper
+	 * @var DataHelper
 	 */
-	private MetaDataHelper $metaDataHelper;
+	private DataHelper $dataHelper;
 
 	/**
-	 * @param MetaDataHelper $metaDataHelper
+	 * @param DataHelper $dataHelper
 	 */
-	public function __construct( MetaDataHelper $metaDataHelper ) {
-		$this->metaDataHelper = $metaDataHelper;
+	public function __construct( DataHelper $dataHelper ) {
+		$this->dataHelper = $dataHelper;
 	}
 
 	/**
@@ -31,7 +31,7 @@ final class AddTrendingOptionInCategorySortingOptionsController extends Abstract
 	 * @return array
 	 */
 	public function __invoke( array $options ): array {
-		if ( ! $this->metaDataHelper->isActivated() ) {
+		if ( ! $this->dataHelper->isActivated() ) {
 			return $options;
 		}
 
@@ -41,7 +41,7 @@ final class AddTrendingOptionInCategorySortingOptionsController extends Abstract
 			unset( $options['menu_order'] );
 		}
 
-		$trendingOption = array( 'trending' => $this->metaDataHelper->getTrendingLabel() );
+		$trendingOption = array( $this->dataHelper->getTrendingOptionNameUrl() => $this->dataHelper->getTrendingLabel() );
 
 		return $menuOrder + $trendingOption + $options;
 	}

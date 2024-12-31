@@ -25,9 +25,9 @@ final class ProductsHelper {
 	private ?bool $haveAllProductsSortMetaKeys = null;
 
 	/**
-	 * @var MetaDataHelper
+	 * @var DataHelper
 	 */
-	private MetaDataHelper $metaDataHelper;
+	private DataHelper $metaDataHelper;
 
 	/**
 	 * @var SalesCalculator
@@ -40,11 +40,11 @@ final class ProductsHelper {
 	private Mapper $mapper;
 
 	/**
-	 * @param MetaDataHelper  $metaDataHelper
+	 * @param DataHelper      $metaDataHelper
 	 * @param SalesCalculator $salesCalculator
 	 * @param Mapper          $mapper
 	 */
-	public function __construct( MetaDataHelper $metaDataHelper, SalesCalculator $salesCalculator, Mapper $mapper ) {
+	public function __construct( DataHelper $metaDataHelper, SalesCalculator $salesCalculator, Mapper $mapper ) {
 		$this->metaDataHelper  = $metaDataHelper;
 		$this->salesCalculator = $salesCalculator;
 		$this->mapper          = $mapper;

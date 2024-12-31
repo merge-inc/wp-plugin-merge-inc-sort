@@ -16,6 +16,16 @@ final class Constants {
 	/**
 	 *
 	 */
+	public const TRENDING_DEFAULT_OPTION_NAME = 'sale';
+
+	/**
+	 *
+	 */
+	public const TRENDING_DEFAULT_LABEL_NAME = 'Sales';
+
+	/**
+	 *
+	 */
 	public const ORDER_RECORDED_META_KEY = '_ms_recorded';
 
 	/**
@@ -157,6 +167,11 @@ final class Constants {
 	 *
 	 */
 	public const SETTINGS_FIELD_TRENDING_INTERVAL = 'ms-settings-field-trending-interval';
+
+	/**
+	 *
+	 */
+	public const SETTINGS_FIELD_TRENDING_OPTION_NAME_URL = 'ms-settings-field-trending-option-name';
 
 	/**
 	 *

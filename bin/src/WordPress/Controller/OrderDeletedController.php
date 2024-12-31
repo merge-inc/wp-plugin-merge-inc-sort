@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MergeInc\Sort\WordPress\Controller;
 
 use Exception;
+use MergeInc\Sort\WordPress\DataHelper;
 use MergeInc\Sort\WordPress\OrderRecorder;
 
 /**
@@ -21,10 +22,17 @@ final class OrderDeletedController extends AbstractController {
 	private OrderRecorder $orderRecorder;
 
 	/**
-	 * @param OrderRecorder $orderRecorder
+	 * @var DataHelper
 	 */
-	public function __construct( OrderRecorder $orderRecorder ) {
+	private DataHelper $dataHelper;
+
+	/**
+	 * @param OrderRecorder $orderRecorder
+	 * @param DataHelper    $dataHelper
+	 */
+	public function __construct( OrderRecorder $orderRecorder, DataHelper $dataHelper ) {
 		$this->orderRecorder = $orderRecorder;
+		$this->dataHelper    = $dataHelper;
 	}
 
 	/**
@@ -33,7 +41,7 @@ final class OrderDeletedController extends AbstractController {
 	 * @throws Exception
 	 */
 	public function __invoke( int $orderId ): void {
-		if ( $order = wc_get_order( $orderId ) ) {
+		if ( $order = $this->dataHelper->getOrderById( $orderId ) ) {
 			$this->orderRecorder->delete( $order );
 		}
 	}

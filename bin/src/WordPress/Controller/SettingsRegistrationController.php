@@ -6,7 +6,7 @@ namespace MergeInc\Sort\WordPress\Controller;
 use Exception;
 use MergeInc\Sort\Globals\Mapper;
 use MergeInc\Sort\Globals\Constants;
-use MergeInc\Sort\WordPress\MetaDataHelper;
+use MergeInc\Sort\WordPress\DataHelper;
 use MergeInc\Sort\Dependencies\League\Plates\Engine;
 
 /**
@@ -24,9 +24,9 @@ final class SettingsRegistrationController extends AbstractController {
 	private Engine $engine;
 
 	/**
-	 * @var MetaDataHelper
+	 * @var DataHelper
 	 */
-	private MetaDataHelper $metaDataHelper;
+	private DataHelper $dataHelper;
 
 	/**
 	 * @var Mapper
@@ -34,14 +34,14 @@ final class SettingsRegistrationController extends AbstractController {
 	private Mapper $mapper;
 
 	/**
-	 * @param Engine         $engine
-	 * @param MetaDataHelper $metaDataHelper
-	 * @param Mapper         $mapper
+	 * @param Engine     $engine
+	 * @param DataHelper $dataHelper
+	 * @param Mapper     $mapper
 	 */
-	public function __construct( Engine $engine, MetaDataHelper $metaDataHelper, Mapper $mapper ) {
-		$this->engine         = $engine;
-		$this->metaDataHelper = $metaDataHelper;
-		$this->mapper         = $mapper;
+	public function __construct( Engine $engine, DataHelper $dataHelper, Mapper $mapper ) {
+		$this->engine     = $engine;
+		$this->dataHelper = $dataHelper;
+		$this->mapper     = $mapper;
 	}
 
 	/**
@@ -56,10 +56,11 @@ final class SettingsRegistrationController extends AbstractController {
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELDS_DEFAULT );
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELD_TRENDING_LABEL );
 		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELD_TRENDING_INTERVAL );
+		register_setting( Constants::ADMIN_MENU_OPTION_GROUP, Constants::SETTINGS_FIELD_TRENDING_OPTION_NAME_URL );
 
 		add_settings_section(
 			Constants::SETTINGS_SECTION_ACTIVATION,
-			'🔌 | ' . __( 'Activation Settings', 'ms' ),
+			'🔌 ' . __( 'Activation Settings', 'ms' ),
 			function () {
 				echo '<hr>';
 			},
@@ -74,7 +75,7 @@ final class SettingsRegistrationController extends AbstractController {
 					'settings-field-checkbox',
 					array(
 						'id'      => Constants::SETTINGS_FIELDS_ACTIVATED,
-						'checked' => checked( true, $this->metaDataHelper->isActivated(), false ),
+						'checked' => checked( true, $this->dataHelper->isActivated(), false ),
 					)
 				);
 			},
@@ -84,15 +85,17 @@ final class SettingsRegistrationController extends AbstractController {
 
 		add_settings_field(
 			Constants::SETTINGS_FIELDS_FREEMIUM_ACTIVATED,
-			__( 'Freemium Activated', 'ms' ),
+			__( 'Freemium Activation', 'ms' ),
 			function () {
 				echo $this->engine->render(
 					'settings-field-checkbox',
 					array(
 						'id'      => Constants::SETTINGS_FIELDS_FREEMIUM_ACTIVATED,
-						'checked' => checked( true, $this->metaDataHelper->isFreemiumActivated(), false ),
+						'checked' => checked( true, $this->dataHelper->isFreemiumActivated(), false ),
 					)
 				);
+
+				echo $this->engine->render( 'freemium-notice' );
 			},
 			Constants::ADMIN_MENU_PAGE_SLUG,
 			Constants::SETTINGS_SECTION_ACTIVATION,
@@ -100,7 +103,7 @@ final class SettingsRegistrationController extends AbstractController {
 
 		add_settings_section(
 			Constants::SETTINGS_SECTION_BASIC,
-			'⚙️ | ' . __( 'Basic Settings', 'ms' ),
+			'⚙️ ' . __( 'Basic Settings', 'ms' ),
 			function () {
 				echo '<hr>';
 			},
@@ -109,29 +112,13 @@ final class SettingsRegistrationController extends AbstractController {
 
 		add_settings_field(
 			Constants::SETTINGS_FIELDS_DEFAULT,
-			__( 'Default Sorting', 'ms' ),
+			__( 'Set Trending as Default', 'ms' ),
 			function () {
 				echo $this->engine->render(
 					'settings-field-checkbox',
 					array(
 						'id'      => Constants::SETTINGS_FIELDS_DEFAULT,
-						'checked' => checked( true, $this->metaDataHelper->isDefault(), false ),
-					)
-				);
-			},
-			Constants::ADMIN_MENU_PAGE_SLUG,
-			Constants::SETTINGS_SECTION_BASIC,
-		);
-
-		add_settings_field(
-			Constants::SETTINGS_FIELD_TRENDING_LABEL,
-			__( 'Trending Label', 'ms' ),
-			function () {
-				echo $this->engine->render(
-					'settings-field-trending-label',
-					array(
-						'id'    => Constants::SETTINGS_FIELD_TRENDING_LABEL,
-						'value' => $this->metaDataHelper->getTrendingLabel(),
+						'checked' => checked( true, $this->dataHelper->isDefault(), false ),
 					)
 				);
 			},
@@ -141,11 +128,28 @@ final class SettingsRegistrationController extends AbstractController {
 
 		add_settings_section(
 			Constants::SETTINGS_SECTION_FREEMIUM,
-			'🌟 | ' . __( 'Freemium Settings', 'ms' ),
+			'🌟 ' . __( 'Freemium Settings', 'ms' ),
 			function () {
 				echo '<hr>';
 			},
 			Constants::ADMIN_MENU_PAGE_SLUG,
+		);
+
+		add_settings_field(
+			Constants::SETTINGS_FIELD_TRENDING_LABEL,
+			__( 'Trending Label', 'ms' ),
+			function () {
+				echo $this->engine->render(
+					'settings-field-trending-label',
+					array(
+						'freemiumActivated' => $this->dataHelper->isFreemiumActivated(),
+						'id'                => Constants::SETTINGS_FIELD_TRENDING_LABEL,
+						'value'             => $this->dataHelper->getTrendingLabel(),
+					)
+				);
+			},
+			Constants::ADMIN_MENU_PAGE_SLUG,
+			Constants::SETTINGS_SECTION_FREEMIUM,
 		);
 
 		add_settings_field(
@@ -155,11 +159,28 @@ final class SettingsRegistrationController extends AbstractController {
 				echo $this->engine->render(
 					'settings-field-trending-interval',
 					array(
-						'freemiumActivated' => $this->metaDataHelper->isFreemiumActivated(),
+						'freemiumActivated' => $this->dataHelper->isFreemiumActivated(),
 						'id'                => Constants::SETTINGS_FIELD_TRENDING_INTERVAL,
 						'intervals'         => $this->mapper->getIntervals(),
 						'daysLabel'         => __( 'Days', 'ms' ),
-						'value'             => $this->metaDataHelper->isFreemiumActivated() ? $this->metaDataHelper->getTrendingInterval() : 7,
+						'value'             => $this->dataHelper->getTrendingInterval(),
+					)
+				);
+			},
+			Constants::ADMIN_MENU_PAGE_SLUG,
+			Constants::SETTINGS_SECTION_FREEMIUM,
+		);
+
+		add_settings_field(
+			Constants::SETTINGS_FIELD_TRENDING_OPTION_NAME_URL,
+			__( 'Trending Option Name in URL (for SEO)', 'ms' ),
+			function () {
+				echo $this->engine->render(
+					'settings-field-trending-option-name-url',
+					array(
+						'freemiumActivated' => $this->dataHelper->isFreemiumActivated(),
+						'id'                => Constants::SETTINGS_FIELD_TRENDING_OPTION_NAME_URL,
+						'value'             => $this->dataHelper->getTrendingOptionNameUrl(),
 					)
 				);
 			},

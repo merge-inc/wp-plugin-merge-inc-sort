@@ -23,17 +23,17 @@ final class OrderRecorder {
 	private SalesCalculator $salesCalculator;
 
 	/**
-	 * @var MetaDataHelper
+	 * @var DataHelper
 	 */
-	private MetaDataHelper $metaDataHelper;
+	private DataHelper $dataHelper;
 
 	/**
 	 * @param SalesCalculator $salesCalculator
-	 * @param MetaDataHelper  $metaDataHelper
+	 * @param DataHelper      $dataHelper
 	 */
-	public function __construct( SalesCalculator $salesCalculator, MetaDataHelper $metaDataHelper ) {
+	public function __construct( SalesCalculator $salesCalculator, DataHelper $dataHelper ) {
 		$this->salesCalculator = $salesCalculator;
-		$this->metaDataHelper  = $metaDataHelper;
+		$this->dataHelper      = $dataHelper;
 	}
 
 	/**
@@ -42,7 +42,7 @@ final class OrderRecorder {
 	 * @throws Exception
 	 */
 	public function record( WC_Order $wcOrder ): void {
-		if ( $this->metaDataHelper->isOrderRecorded( $wcOrder->get_id() ) ) {
+		if ( $this->dataHelper->isOrderRecorded( $wcOrder->get_id() ) ) {
 			return;
 		}
 
@@ -50,17 +50,17 @@ final class OrderRecorder {
 			$itemData  = $item->get_data();
 			$productId = $itemData['product_id'] ?? null;
 			if ( $productId ) {
-				$this->metaDataHelper->setProductSales(
+				$this->dataHelper->setProductSales(
 					$productId,
 					$this->salesCalculator->addSale(
-						$this->metaDataHelper->getProductSales( $productId ),
+						$this->dataHelper->getProductSales( $productId ),
 						new DateTime( $wcOrder->get_date_created()->date( 'Y-m-d' ) )
 					)
 				);
 			}
 		}
 
-		$this->metaDataHelper->setOrderRecorded( $wcOrder->get_id() );
+		$this->dataHelper->setOrderRecorded( $wcOrder->get_id() );
 	}
 
 	/**
@@ -69,7 +69,7 @@ final class OrderRecorder {
 	 * @throws Exception
 	 */
 	public function delete( WC_Order $wcOrder ): void {
-		if ( ! $this->metaDataHelper->isOrderRecorded( $wcOrder->get_id() ) ) {
+		if ( ! $this->dataHelper->isOrderRecorded( $wcOrder->get_id() ) ) {
 			return;
 		}
 
@@ -77,16 +77,16 @@ final class OrderRecorder {
 			$itemData  = $item->get_data();
 			$productId = $itemData['product_id'] ?? null;
 			if ( $productId ) {
-				$this->metaDataHelper->setProductSales(
+				$this->dataHelper->setProductSales(
 					$productId,
 					$this->salesCalculator->removeSale(
-						$this->metaDataHelper->getProductSales( $productId ),
+						$this->dataHelper->getProductSales( $productId ),
 						new DateTime( $wcOrder->get_date_created()->date( 'Y-m-d' ) )
 					)
 				);
 			}
 		}
 
-		$this->metaDataHelper->deleteOrderRecorded( $wcOrder->get_id() );
+		$this->dataHelper->deleteOrderRecorded( $wcOrder->get_id() );
 	}
 }

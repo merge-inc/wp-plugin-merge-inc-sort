@@ -3,8 +3,9 @@
  * @var string $id
  */
 /**
- * @var string $value
+ * @var int $value
  */
+
 /**
  * @var bool $freemiumActivated
  */
