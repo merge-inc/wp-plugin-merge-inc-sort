@@ -5,15 +5,15 @@ declare(strict_types=1);
  * Plugin Name: Sort
  * Plugin URI: https://wordpress.org/plugins/sort/
  * Description: Sort Plugin
- * Version: 0.0.10
+ * Version: MS.0.0.10
  * Author: Merge Inc
  * Author URI: https://joinmerge.gr
  * GitHub Plugin URI: https://github.com/merge-inc/sort
  * License: GPLv3
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
- * Requires at least: 6.2.1
+ * Requires at least: 6.2.10
  * Tested up to: 6.7.1
- * WC requires at least: 7.3.0
+ * WC requires at least: 7.3.00
  * WC tested up to: 9.5.1
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
